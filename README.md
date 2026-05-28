@@ -38,6 +38,31 @@ Cleanly é uma aplicação web moderna e leve para **remoção de marcas d'água
 
 ---
 
+## 📦 Tamanho do Build e Otimizações
+
+O projeto foi cuidadosamente otimizado para ter o menor tamanho possível de imagem:
+
+- Usamos **Docker socket mount** no worker (em vez de instalar o pacote `docker.io` dentro da imagem Python).
+- Adicionamos `.dockerignore` estratégicos para reduzir o contexto de build.
+- Apenas o container `iopaint` carrega as dependências pesadas do LaMa.
+
+**Estimativa realista:**
+- Primeiro build completo: ≈ **2.8 GB – 3.5 GB** no disco
+- Build subsequentes: muito mais rápidos (usa cache)
+
+---
+
+## 🏗️ Arquitetura de Processamento
+
+O processamento de imagens é feito da seguinte forma:
+
+1. O Celery Worker recebe a tarefa.
+2. Ele executa o comando `iopaint` **dentro do container dedicado** usando `docker exec` (via Docker socket).
+3. O LaMa processa a imagem com a máscara enviada.
+4. O resultado é salvo no volume compartilhado e retornado ao usuário.
+
+Essa abordagem mantém as imagens do backend e worker bem leves.
+
 ## 🚀 Como Rodar (Recomendado)
 
 ### 1. Clone o repositório
@@ -66,7 +91,13 @@ openssl rand -hex 32
 sudo docker compose up --build -d
 ```
 
-A primeira execução pode demorar alguns minutos (download do modelo LaMa).
+**Notas importantes sobre o build:**
+
+- A primeira execução é mais pesada porque baixa as imagens base + o container do IOPaint (LaMa).
+- Tamanho total estimado após o primeiro build completo: **~2.8 GB – 3.5 GB** no disco.
+- O projeto foi otimizado para ser o mais leve possível (não instalamos `docker.io` dentro da imagem Python, usamos Docker socket mount em vez disso).
+
+Execuções seguintes são muito mais rápidas graças ao cache do Docker.
 
 ### 4. Acesse a aplicação
 

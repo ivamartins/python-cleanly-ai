@@ -15,7 +15,7 @@ O projeto está focado **100% em remoção de marca d'água** usando **LaMa via 
 1. O usuário desenha a máscara no frontend.
 2. O backend salva a imagem + máscara.
 3. A task do Celery chama o `LamaEngine`.
-4. O engine executa o comando `iopaint run --model lama` dentro do container dedicado.
+4. O engine executa o comando `iopaint run --model lama` **dentro do container dedicado** usando `docker exec` (via Docker socket).
 5. O resultado volta para o usuário.
 
 ## Por que só LaMa?
