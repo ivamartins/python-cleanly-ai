@@ -60,7 +60,7 @@ export default function CleanlyWatermark() {
       const data = await res.json();
       if (data.access_token) {
         setToken(data.access_token);
-        setMessage(endpoint === 'register' ? 'Conta criada!' : 'Login realizado!');
+        setMessage(endpoint === 'register' ? 'Account created!' : 'Login successful!');
         setTimeout(() => fetchGenerations(), 300);
       } else {
         setMessage(data.detail || 'Authentication error');
@@ -111,7 +111,7 @@ export default function CleanlyWatermark() {
         setMaskBase64('');
         setTimeout(() => fetchGenerations(), 500);
       } else {
-        setMessage('Erro ao enviar imagem');
+        setMessage('Error sending image');
       }
     } catch {
       setMessage('Server connection error');
@@ -144,7 +144,7 @@ export default function CleanlyWatermark() {
         {/* Auth */}
         {!token && (
           <div className="mb-8 p-6 bg-zinc-900 rounded-2xl border border-zinc-800">
-            <h2 className="text-lg font-semibold mb-4">Acesse sua conta</h2>
+            <h2 className="text-lg font-semibold mb-4">Access your account</h2>
             <div className="flex flex-col sm:flex-row gap-3">
               <input
                 type="email"
