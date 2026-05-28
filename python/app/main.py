@@ -19,7 +19,7 @@ app.add_middleware(
 # Create tables (for development)
 Base.metadata.create_all(bind=engine)
 
-# Garantir que as pastas de dados existam
+# Ensure data directories exist
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 

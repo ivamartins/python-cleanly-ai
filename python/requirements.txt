@@ -2,12 +2,10 @@ fastapi
 uvicorn[standard]
 sqlalchemy
 psycopg[binary]
-alembic
 pydantic-settings
 python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
-httpx
 Pillow
 celery[redis]
 redis
