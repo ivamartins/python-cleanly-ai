@@ -1,78 +1,143 @@
-# Cleanly - Watermark Removal
+# Cleanly
 
-**Remoção de Marca d'Água com IA Local (LaMa)**
+**Remoção Inteligente de Marca d'Água com IA Local**
 
-Cleanly é uma aplicação web simples e elegante para remover marcas d'água, logos e textos de imagens usando **LaMa** (via IOPaint), tudo rodando localmente no seu computador.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)](https://www.docker.com/)
 
-Projeto criado para portfólio e estudo, com código limpo, arquitetura clara e foco total no Módulo 1 (Watermark Removal).
+Cleanly é uma aplicação web moderna e leve para **remoção de marcas d'água, logos e textos** de imagens usando inteligência artificial local (LaMa via IOPaint).
 
-## Funcionalidades Atuais
+> Projeto desenvolvido com foco em **qualidade de código**, simplicidade e como portfólio técnico / estudo.
 
-- Upload de imagem
-- Editor de máscara com pincel e borracha (preciso)
-- Processamento assíncrono com Celery + LaMa
+---
+
+## ✨ Funcionalidades
+
+- Remoção de alta qualidade usando **LaMa** (excelente para marcas d'água e texto)
+- Editor de máscara com pincel e borracha (preciso e intuitivo)
+- Processamento assíncrono (fila com Celery)
 - Galeria de resultados com thumbnails
-- Autenticação simples (login/registro)
-- 100% local (sem envio para nuvem)
+- Autenticação JWT (login e registro)
+- 100% local — nenhuma imagem sai do seu computador
+- Arquitetura limpa e fácil de estudar
 
-## Stack
+---
 
-- **Backend**: FastAPI + SQLAlchemy + PostgreSQL + Celery + Redis
-- **IA**: LaMa via IOPaint (leve e de alta qualidade para watermark)
-- **Frontend**: Next.js + TypeScript + Tailwind
-- **Infra**: Docker Compose
+## 🛠️ Stack Tecnológica
 
-## Como Rodar
+| Camada       | Tecnologia                          |
+|--------------|-------------------------------------|
+| Backend      | FastAPI + SQLAlchemy + Celery       |
+| IA           | LaMa (via IOPaint)                  |
+| Banco        | PostgreSQL                          |
+| Cache/Fila   | Redis                               |
+| Frontend     | Next.js 15 + TypeScript + Tailwind  |
+| Infra        | Docker Compose                      |
+
+---
+
+## 🚀 Como Rodar (Recomendado)
+
+### 1. Clone o repositório
 
 ```bash
-# 1. Suba tudo (primeira vez pode demorar um pouco baixando o modelo LaMa)
+git clone https://github.com/ivamartins/python-cleanly-ai.git
+cd python-cleanly-ai
+```
+
+### 2. Configure as variáveis de ambiente
+
+```bash
+cp .env.example .env
+```
+
+Edite o arquivo `.env` e coloque uma `SECRET_KEY` forte:
+
+```bash
+# Gere uma chave segura
+openssl rand -hex 32
+```
+
+### 3. Suba a aplicação
+
+```bash
 sudo docker compose up --build -d
-
-# 2. Acesse
-# Frontend:  http://localhost:3000
-# Backend:   http://localhost:8000/docs
 ```
 
-Depois de subir, registre uma conta e comece a remover marcas d'água.
+A primeira execução pode demorar alguns minutos (download do modelo LaMa).
 
-## Por que só Watermark Removal?
+### 4. Acesse a aplicação
 
-Este projeto foi **deliberadamente simplificado** para ser:
-- Leve e rápido de buildar
-- Fácil de estudar e manter
-- Um excelente exemplo de portfólio (arquitetura limpa, separação de concerns, engines plugáveis)
+- **Frontend**: http://localhost:3000
+- **API Docs**: http://localhost:8000/docs
 
-Outros modos (Object Removal e Restoration) foram removidos para manter o foco e a simplicidade.
+Crie uma conta e comece a remover marcas d'água!
 
-## Estrutura do Projeto
+---
+
+## 📁 Estrutura do Projeto
 
 ```
-cleanly/
+python-cleanly-ai/
 ├── docker-compose.yml
-├── python/                 # Backend (FastAPI)
+├── Dockerfile.iopaint
+├── README.md
+├── LICENSE
+├── .env.example
+│
+├── frontend/                 # Next.js
 │   ├── app/
-│   │   ├── engines/        # LaMa Engine (único engine ativo)
-│   │   ├── routers/
-│   │   ├── services/
-│   │   └── tasks.py
-│   └── requirements.txt
-├── frontend/               # Next.js
-└── Dockerfile.iopaint
+│   └── components/
+│
+└── python/                   # Backend FastAPI
+    ├── app/
+    │   ├── engines/          # LaMa Engine
+    │   ├── routers/
+    │   ├── services/
+    │   └── tasks.py
+    └── requirements.txt
 ```
 
-## Desenvolvimento
+---
 
-- O engine LaMa roda dentro do container `cleanly-iopaint`
-- O backend se comunica via volumes + subprocess (padrão simples e confiável)
-- Todo processamento é assíncrono via Celery
+## 🎯 Objetivo do Projeto
 
-## Objetivo
+Este projeto foi criado com os seguintes propósitos:
 
-Este projeto serve como:
-- Portfólio técnico (Fullstack + IA local)
-- Estudo de arquitetura limpa com engines de IA
-- Demonstração de pipeline completo (upload → máscara → fila → processamento → galeria)
+- Servir como **portfólio técnico** (Full Stack + IA)
+- Demonstrar uma arquitetura limpa com **Engines plugáveis**
+- Ser um bom material de **estudo** (código bem organizado e comentado)
+- Focar em uma funcionalidade excelente (Watermark Removal) em vez de muitas funcionalidades medíocres
 
-## Licença
+---
 
-Estudo / Portfólio — use como referência.
+## 🔒 Privacidade
+
+Todas as imagens e processamentos acontecem **localmente**.  
+Nada é enviado para servidores externos.
+
+---
+
+## 📄 Licença
+
+Distribuído sob a licença [MIT](LICENSE).
+
+---
+
+## 👤 Autor
+
+**Iva Martins**  
+https://github.com/ivamartins
+
+---
+
+## 🤝 Contribuições
+
+Este é um projeto de estudo e portfólio.  
+Sugestões e melhorias são bem-vindas via Pull Request ou Issues.
+
+---
+
+**Feito com foco em qualidade e simplicidade.**
