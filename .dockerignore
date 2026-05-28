@@ -1,0 +1,30 @@
+# Ignore everything by default
+*
+
+# Allow only what's needed for IOPaint build
+!Dockerfile.iopaint
+!python/requirements.txt
+!python/app/
+!python/Dockerfile
+!frontend/
+
+# Ignore heavy/unnecessary things
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+.git/
+.gitignore
+.env
+.env.*
+data/
+iopaint_models/
+*.log
+node_modules/
+.next/
+.DS_Store

@@ -44,7 +44,6 @@ services:
       - ./data:/app/data
     depends_on:
       - postgres
-      - iopaint
       - redis
 
   redis:
@@ -65,6 +64,7 @@ services:
       CELERY_RESULT_BACKEND: redis://redis:6379/0
     volumes:
       - ./data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock   # Access host Docker to run commands inside iopaint container
     depends_on:
       - postgres
       - redis
