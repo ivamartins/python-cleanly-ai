@@ -15,6 +15,7 @@ class Generation(Base):
     negative_prompt = Column(Text, nullable=True) # negative prompt for generative models
     original_filename = Column(String, nullable=True)
     original_path = Column(String, nullable=True)   # caminho da imagem original salva
+    mask_base64 = Column(Text, nullable=True)       # máscara em base64 (usada temporariamente)
     mask_path = Column(String, nullable=True)       # path to saved mask
     result_path = Column(String, nullable=True)     # caminho do resultado
     thumbnail_path = Column(String, nullable=True)  # caminho da thumbnail do resultado
