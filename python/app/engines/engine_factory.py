@@ -4,7 +4,7 @@ from app.engines.base import BaseEngine
 from app.engines.lama_engine import LamaEngine
 
 
-# Apenas o engine LaMa (Módulo 1 - Remoção de Marca d'Água)
+# Only LaMa engine is active (Module 1 - Watermark Removal)
 ENGINE_REGISTRY: Dict[str, Type[BaseEngine]] = {
     "lama": LamaEngine,
 }
@@ -12,9 +12,9 @@ ENGINE_REGISTRY: Dict[str, Type[BaseEngine]] = {
 
 def get_engine(engine_name: Optional[str] = None) -> BaseEngine:
     """
-    Factory responsável por instanciar o engine correto com base no nome.
+    Factory responsible for instantiating the correct engine based on name.
 
-    Esta é a única forma recomendada de obter um engine no sistema.
+    This is the recommended way to obtain an engine in the system.
     """
     if not engine_name:
         engine_name = "lama"
@@ -24,7 +24,7 @@ def get_engine(engine_name: Optional[str] = None) -> BaseEngine:
     engine_class = ENGINE_REGISTRY.get(engine_name)
 
     if engine_class is None:
-        print(f"[EngineFactory] Engine '{engine_name}' não encontrado. Usando 'lama'.")
+        print(f"[EngineFactory] Engine '{engine_name}' not found. Falling back to 'lama'.")
         engine_class = LamaEngine
 
     return engine_class()

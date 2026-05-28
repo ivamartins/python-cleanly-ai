@@ -63,10 +63,10 @@ export default function CleanlyWatermark() {
         setMessage(endpoint === 'register' ? 'Conta criada!' : 'Login realizado!');
         setTimeout(() => fetchGenerations(), 300);
       } else {
-        setMessage(data.detail || 'Erro de autenticação');
+        setMessage(data.detail || 'Authentication error');
       }
     } catch {
-      setMessage('Erro de conexão');
+      setMessage('Connection error');
     }
   };
 
@@ -74,7 +74,7 @@ export default function CleanlyWatermark() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      setMessage('Selecione uma imagem válida');
+      setMessage('Please select a valid image');
       return;
     }
     const reader = new FileReader();
@@ -88,7 +88,7 @@ export default function CleanlyWatermark() {
 
   const processImage = async () => {
     if (!token || !originalFile || !maskBase64) {
-      setMessage('Faça login, envie uma imagem e marque a máscara');
+      setMessage('Please log in, upload an image and draw the mask');
       return;
     }
     setIsProcessing(true);
@@ -105,7 +105,7 @@ export default function CleanlyWatermark() {
         body: formData,
       });
       if (res.ok) {
-        setMessage('Processamento iniciado com LaMa!');
+        setMessage('Processing started with LaMa!');
         setOriginalImage(null);
         setOriginalFile(null);
         setMaskBase64('');
@@ -114,7 +114,7 @@ export default function CleanlyWatermark() {
         setMessage('Erro ao enviar imagem');
       }
     } catch {
-      setMessage('Erro de conexão com o servidor');
+      setMessage('Server connection error');
     } finally {
       setIsProcessing(false);
     }
@@ -137,7 +137,7 @@ export default function CleanlyWatermark() {
         <header className="mb-8">
           <h1 className="text-4xl font-bold tracking-tight">Cleanly</h1>
           <p className="text-zinc-400 mt-2">
-            Remoção de Marca d'Água com IA • LaMa Inpainting
+            AI Watermark Removal • LaMa Inpainting
           </p>
         </header>
 
@@ -213,7 +213,7 @@ export default function CleanlyWatermark() {
                       disabled={isProcessing || !maskBase64}
                       className="flex-1 py-3 bg-white text-black font-medium rounded-xl hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed transition"
                     >
-                      {isProcessing ? 'Processando com LaMa...' : 'Remover Marca d\'Água'}
+                      {isProcessing ? 'Processing with LaMa...' : 'Remove Watermark'}
                     </button>
                     <button
                       onClick={() => {
@@ -235,7 +235,7 @@ export default function CleanlyWatermark() {
             {/* Gallery */}
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold">Histórico</h2>
+                <h2 className="text-xl font-semibold">History</h2>
                 <button
                   onClick={fetchGenerations}
                   className="text-sm px-4 py-1.5 bg-zinc-900 hover:bg-zinc-800 rounded-lg border border-zinc-700"

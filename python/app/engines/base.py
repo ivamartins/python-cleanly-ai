@@ -18,8 +18,8 @@ class BaseEngine(ABC):
         mode: str,
     ) -> Path:
         """
-        Prepara a máscara para remoção de marca d'água.
-        Para watermark usamos uma máscara mais precisa (sem dilatação agressiva).
+        Prepares the mask for watermark removal.
+        For watermark we use a precise mask (no aggressive dilation).
         """
         from app.services.processing import create_mask_from_base64
 
@@ -45,7 +45,7 @@ class BaseEngine(ABC):
         Args:
             original_image_path: Caminho da imagem original
             mask_path: Caminho da máscara (já preparada)
-            mode: Modo de edição (atualmente apenas "watermark")
+            mode: Editing mode (currently only "watermark")
             prompt: Ignorado no LaMa
             negative_prompt: Ignorado no LaMa
 

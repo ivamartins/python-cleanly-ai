@@ -25,6 +25,7 @@ services:
       --port 8080
     volumes:
       - iopaint_models:/app/models
+      - ./data:/app/data
 
   backend:
     build: ./python

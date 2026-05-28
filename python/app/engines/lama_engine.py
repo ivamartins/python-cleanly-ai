@@ -10,8 +10,8 @@ from app.services.processing import RESULTS_DIR
 
 class LamaEngine(BaseEngine):
     """
-    Engine baseado no LaMa via IOPaint.
-    Atualmente o engine padrão e mais leve do Cleanly.
+    LaMa engine using IOPaint.
+    Currently the only and lightest engine in Cleanly.
     """
 
     name = "lama"
@@ -25,24 +25,26 @@ class LamaEngine(BaseEngine):
         negative_prompt: Optional[str] = None,
     ) -> Path:
         """
-        Executa inpainting usando LaMa.
+        Performs inpainting using LaMa.
 
-        LaMa é um modelo de inpainting tradicional e **não utiliza prompts de texto**.
-        Se um prompt for fornecido, ele será ignorado (apenas registrado no log).
+        LaMa is a traditional inpainting model and **does not use text prompts**.
+        Any provided prompt will be ignored (only logged).
         """
         if prompt or negative_prompt:
             print(
-                f"[LamaEngine] Prompt recebido, mas será ignorado. "
-                f"LaMa não suporta prompts de texto. "
+                f"[LamaEngine] Prompt received but will be ignored. "
+                f"LaMa does not support text prompts. "
                 f"Prompt: '{(prompt or '')[:80]}...'"
             )
 
         result_filename = f"result_{uuid.uuid4().hex}.png"
         output_path = RESULTS_DIR / result_filename
 
+        # Run iopaint CLI inside the dedicated iopaint container using docker exec.
+        # This keeps heavy ML dependencies only in the iopaint service.
         cmd = [
-            "iopaint",
-            "run",
+            "docker", "exec", "cleanly-iopaint",
+            "iopaint", "run",
             "--model", "lama",
             "--device", "cpu",
             "--image", str(original_image_path),
@@ -65,4 +67,4 @@ class LamaEngine(BaseEngine):
 
         except subprocess.CalledProcessError as e:
             print("IOPaint (LaMa) error:", e.stderr)
-            raise Exception("Failed to process image with LaMa engine")
+            raise Exception("Failed to process image with LaMa engine (via docker exec in iopaint container)")

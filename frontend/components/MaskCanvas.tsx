@@ -188,7 +188,7 @@ const MaskCanvas: React.FC<MaskCanvasProps> = ({ backgroundImage, onMaskChange }
   if (!backgroundImage) {
     return (
       <div className="w-full max-w-[600px] aspect-square bg-zinc-900 border border-zinc-700 flex items-center justify-center text-zinc-500 rounded-xl">
-        Faça upload de uma imagem para começar a marcar a máscara
+        Upload an image to start drawing the mask
       </div>
     );
   }
@@ -269,7 +269,7 @@ const MaskCanvas: React.FC<MaskCanvasProps> = ({ backgroundImage, onMaskChange }
       </div>
 
       <p className="text-xs text-zinc-500 text-center max-w-md mx-auto">
-        Pinte as áreas com marca d'água. Use o pincel para remover e a borracha para corrigir.
+        Paint over the watermark areas. Use the brush to remove and eraser to correct.
       </p>
     </div>
   );

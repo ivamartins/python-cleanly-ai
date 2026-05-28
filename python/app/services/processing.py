@@ -35,8 +35,8 @@ def create_mask_from_base64(
     feather: bool = False,
 ) -> Path:
     """
-    Converte uma máscara em base64 para uma imagem PNG no disco.
-    Usada pelo engine LaMa para remoção de marca d'água.
+    Converts a base64 mask into a PNG image on disk.
+    Used by the LaMa engine for watermark removal.
     """
     if "," in mask_base64:
         mask_base64 = mask_base64.split(",", 1)[1]
@@ -44,18 +44,18 @@ def create_mask_from_base64(
     mask_bytes = base64.b64decode(mask_base64)
     mask_img = Image.open(io.BytesIO(mask_bytes)).convert("L")
 
-    # Redimensiona para o tamanho original se necessário
+    # Resize to original size if necessary
     if mask_img.size != original_size:
         mask_img = mask_img.resize(original_size, Image.Resampling.NEAREST)
 
-    # Para watermark: máscara precisa (sem dilatação)
+    # For watermark: precise mask (no dilation)
     if dilate:
         mask_img = mask_img.filter(ImageFilter.MaxFilter(size=7))
 
     if feather:
         mask_img = mask_img.filter(ImageFilter.GaussianBlur(radius=1))
 
-    # Salva a máscara final
+    # Save the final mask
     mask_path = MASKS_DIR / f"mask_{uuid.uuid4().hex}.png"
     mask_img.save(mask_path)
     return mask_path

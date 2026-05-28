@@ -33,8 +33,8 @@ async def create_generation(
     with open(original_path, "wb") as buffer:
         shutil.copyfileobj(image.file, buffer)
 
-    # Para Módulo 1 (Watermark Removal) usamos sempre LaMa
-    # LaMa não usa prompt, então ignoramos prompt/negative_prompt
+    # Module 1: Always use LaMa for watermark removal
+    # LaMa does not use text prompts
     new_gen = Generation(
         user_id=current_user.id,
         status="queued",
@@ -50,7 +50,7 @@ async def create_generation(
     db.commit()
     db.refresh(new_gen)
 
-    # Enfileira o processamento assíncrono
+    # Queue asynchronous processing
     process_generation_task.delay(new_gen.id)
 
     return new_gen

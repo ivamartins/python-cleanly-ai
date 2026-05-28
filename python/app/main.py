@@ -32,4 +32,4 @@ app.include_router(generations.router)
 
 @app.get("/")
 def root():
-    return {"message": "Cleanly API - Remoção de Marca d'Água com IA (LaMa)"}
+    return {"message": "Cleanly API - AI Watermark Removal (LaMa)"}

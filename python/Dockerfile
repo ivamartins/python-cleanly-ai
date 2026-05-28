@@ -1,10 +1,11 @@
 FROM python:3.12-slim
 WORKDIR /app
 
-# Install minimal system dependencies (for Pillow + basic image processing)
+# Install system dependencies + Docker CLI (needed to run commands inside iopaint container)
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
+    docker.io \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

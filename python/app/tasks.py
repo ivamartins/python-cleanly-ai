@@ -32,7 +32,7 @@ def process_generation_task(self, generation_id: int):
         with Image.open(original_path) as img:
             original_size = img.size
 
-        # Prepara a máscara (precisa e sem dilatação para watermark)
+        # Prepare precise mask for watermark removal (no aggressive dilation)
         processing_engine = get_engine("lama")
         mask_path = processing_engine.prepare_mask(
             gen.mask_base64,
@@ -67,7 +67,7 @@ def process_generation_task(self, generation_id: int):
         if gen:
             gen.status = "failed"
             db.commit()
-        # Re-tenta a task em caso de erro temporário
+        # Retry the task in case of temporary error
         raise self.retry(exc=exc, countdown=60)
     finally:
         db.close()
