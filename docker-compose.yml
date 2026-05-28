@@ -1,0 +1,82 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cleanly-postgres
+    environment:
+      POSTGRES_USER: cleanly
+      POSTGRES_PASSWORD: cleanly123
+      POSTGRES_DB: cleanly
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  iopaint:
+    build:
+      context: .
+      dockerfile: Dockerfile.iopaint
+    container_name: cleanly-iopaint
+    ports:
+      - "8080:8080"
+    command: >
+      iopaint run
+      --model lama
+      --device cpu
+      --port 8080
+    volumes:
+      - iopaint_models:/app/models
+
+  backend:
+    build: ./python
+    container_name: cleanly-backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://cleanly:cleanly123@postgres:5432/cleanly
+      SECRET_KEY: ${SECRET_KEY}
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      REFRESH_TOKEN_EXPIRE_DAYS: 7
+      IOPAINT_URL: http://iopaint:8080
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - postgres
+      - iopaint
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: cleanly-redis
+    ports:
+      - "6379:6379"
+
+  celery-worker:
+    build: ./python
+    container_name: cleanly-celery
+    command: celery -A app.celery_app worker --loglevel=info
+    environment:
+      DATABASE_URL: postgresql://cleanly:cleanly123@postgres:5432/cleanly
+      SECRET_KEY: ${SECRET_KEY}
+      IOPAINT_URL: http://iopaint:8080
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - postgres
+      - redis
+      - iopaint
+
+  frontend:
+    build: ./frontend
+    container_name: cleanly-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  iopaint_models:

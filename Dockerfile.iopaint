@@ -1,0 +1,19 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Instala dependências do sistema
+RUN apt-get update && apt-get install -y \
+    git \
+    libgl1 \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instala o IOPaint
+RUN pip install --no-cache-dir iopaint
+
+# Expõe a porta
+EXPOSE 8080
+
+# Comando padrão (pode ser sobrescrito no docker-compose)
+CMD ["iopaint", "run", "--model", "lama", "--device", "cpu", "--port", "8080"]
