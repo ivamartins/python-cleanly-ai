@@ -9,16 +9,16 @@ class Generation(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     status = Column(String, default="pending")  # pending, processing, done, failed
-    mode = Column(String, default="watermark")    # atualmente apenas "watermark"
-    engine = Column(String, default="lama")       # atualmente apenas "lama" (LaMa via IOPaint)
+    mode = Column(String, default="watermark")    # currently only "watermark"
+    engine = Column(String, default="lama")       # currently only "lama" (LaMa via IOPaint)
     prompt = Column(Text, nullable=True)          # text prompt for generative models
     negative_prompt = Column(Text, nullable=True) # negative prompt for generative models
     original_filename = Column(String, nullable=True)
-    original_path = Column(String, nullable=True)   # caminho da imagem original salva
-    mask_base64 = Column(Text, nullable=True)       # máscara em base64 (usada temporariamente)
+    original_path = Column(String, nullable=True)   # path to the saved original image
+    mask_base64 = Column(Text, nullable=True)       # mask in base64 (temporarily stored)
     mask_path = Column(String, nullable=True)       # path to saved mask
-    result_path = Column(String, nullable=True)     # caminho do resultado
-    thumbnail_path = Column(String, nullable=True)  # caminho da thumbnail do resultado
+    result_path = Column(String, nullable=True)     # path to the result
+    thumbnail_path = Column(String, nullable=True)  # path to the result thumbnail
     created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="generations")

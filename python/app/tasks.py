@@ -2,6 +2,7 @@ from app.celery_app import celery_app
 from app.engines.engine_factory import get_engine
 from app.db import SessionLocal
 from app.models.generation import Generation
+from app.models.user import User
 from pathlib import Path
 from PIL import Image
 import logging
@@ -14,6 +15,7 @@ logger = logging.getLogger(__name__)
 @celery_app.task(bind=True, max_retries=2)
 def process_generation_task(self, generation_id: int):
     db = SessionLocal()
+    gen = None
     try:
         gen = db.query(Generation).filter(Generation.id == generation_id).first()
         if not gen:
@@ -28,7 +30,7 @@ def process_generation_task(self, generation_id: int):
         if not original_path.exists():
             raise FileNotFoundError("Original image not found")
 
-        # Carrega tamanho da imagem original
+        # Load original image dimensions
         with Image.open(original_path) as img:
             original_size = img.size
 
@@ -41,14 +43,14 @@ def process_generation_task(self, generation_id: int):
         )
         logger.info("Mask prepared for watermark removal")
 
-        # Executa o processamento com LaMa
+        # Execute LaMa processing
         result_path = processing_engine.process(
             original_image_path=original_path,
             mask_path=mask_path,
             mode="watermark",
         )
 
-        # Gera thumbnail
+        # Generate thumbnail
         thumbnail_filename = f"thumb_{result_path.name}"
         thumbnail_path = RESULTS_DIR / thumbnail_filename
 
@@ -56,7 +58,7 @@ def process_generation_task(self, generation_id: int):
             img.thumbnail((400, 400))
             img.save(thumbnail_path, "PNG")
 
-        # Atualiza o registro
+        # Update the record
         gen.status = "done"
         gen.mask_path = str(mask_path)
         gen.result_path = str(result_path)
@@ -67,7 +69,6 @@ def process_generation_task(self, generation_id: int):
         if gen:
             gen.status = "failed"
             db.commit()
-        # Retry the task in case of temporary error
         raise self.retry(exc=exc, countdown=60)
     finally:
         db.close()

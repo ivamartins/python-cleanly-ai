@@ -128,28 +128,30 @@ const MaskCanvas: React.FC<MaskCanvasProps> = ({ backgroundImage, onMaskChange }
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const alpha = data[i + 3];
+      const isBrush = alpha < 128;
+      data[i] = isBrush ? 255 : 0;
+      data[i + 1] = isBrush ? 255 : 0;
+      data[i + 2] = isBrush ? 255 : 0;
+      data[i + 3] = 255;
+    }
+
     const maskCanvas = document.createElement('canvas');
     maskCanvas.width = canvas.width;
     maskCanvas.height = canvas.height;
-
     const maskCtx = maskCanvas.getContext('2d');
-    if (maskCtx) {
-      maskCtx.fillStyle = 'black';
-      maskCtx.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+    if (!maskCtx) return;
 
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = canvas.width;
-      tempCanvas.height = canvas.height;
-      const tempCtx = tempCanvas.getContext('2d');
-      if (tempCtx) {
-        tempCtx.drawImage(canvas, 0, 0);
-        maskCtx.globalCompositeOperation = 'destination-out';
-        maskCtx.drawImage(tempCanvas, 0, 0);
-      }
-
-      const maskBase64 = maskCanvas.toDataURL('image/png');
-      onMaskChange(maskBase64);
-    }
+    maskCtx.putImageData(imageData, 0, 0);
+    const maskBase64 = maskCanvas.toDataURL('image/png');
+    onMaskChange(maskBase64);
   };
 
   const undo = () => {
@@ -201,20 +203,20 @@ const MaskCanvas: React.FC<MaskCanvasProps> = ({ backgroundImage, onMaskChange }
             onClick={() => setTool('brush')}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${tool === 'brush' ? 'bg-white text-black' : 'bg-zinc-800 hover:bg-zinc-700'}`}
           >
-            Pincel
+            Brush
           </button>
           <button
             onClick={() => setTool('eraser')}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${tool === 'eraser' ? 'bg-white text-black' : 'bg-zinc-800 hover:bg-zinc-700'}`}
           >
-            Borracha
+            Eraser
           </button>
         </div>
 
         <div className="h-6 w-px bg-zinc-700" />
 
         <div className="flex items-center gap-3 text-sm">
-          <span>Tamanho:</span>
+          <span>Size:</span>
           <input
             type="range"
             min="5"
@@ -227,7 +229,7 @@ const MaskCanvas: React.FC<MaskCanvasProps> = ({ backgroundImage, onMaskChange }
         </div>
 
         <div className="flex items-center gap-3 text-sm">
-          <span>Opacidade:</span>
+          <span>Opacity:</span>
           <input
             type="range"
             min="0.1"
@@ -247,13 +249,13 @@ const MaskCanvas: React.FC<MaskCanvasProps> = ({ backgroundImage, onMaskChange }
           disabled={history.length <= 1}
           className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-md text-sm disabled:opacity-40"
         >
-          Desfazer
+          Undo
         </button>
         <button
           onClick={clearMask}
           className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-sm font-medium"
         >
-          Limpar Tudo
+          Clear All
         </button>
       </div>
 

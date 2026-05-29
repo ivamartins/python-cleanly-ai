@@ -1,51 +1,51 @@
 # Engines - Cleanly
 
-Esta pasta contém a camada de engines de processamento do Cleanly.
+This folder contains the processing engine layer for Cleanly.
 
-## Estado Atual (Módulo 1 - Watermark Removal)
+## Current Status (Module 1 - Watermark Removal)
 
-O projeto está focado **100% em remoção de marca d'água** usando **LaMa via IOPaint**.
+The project is **100% focused on watermark removal** using **LaMa via IOPaint**.
 
-- `base.py` — Interface abstrata
-- `engine_factory.py` — Factory simples (só "lama")
-- `lama_engine.py` — Implementação funcional usando LaMa (o mais leve e rápido para watermark)
+- `base.py` — Abstract interface
+- `engine_factory.py` — Simple factory (only "lama")
+- `lama_engine.py` — Functional implementation using LaMa (the lightest and fastest for watermark)
 
-## Como funciona
+## How it works
 
-1. O usuário desenha a máscara no frontend.
-2. O backend salva a imagem + máscara.
-3. A task do Celery chama o `LamaEngine`.
-4. O engine executa o comando `iopaint run --model lama` **dentro do container dedicado** usando `docker exec` (via Docker socket).
-5. O resultado volta para o usuário.
+1. The user draws a mask on the frontend.
+2. The backend saves the image + mask.
+3. The Celery task calls `LamaEngine`.
+4. The engine runs the `iopaint run --model lama` command **inside the dedicated container** using `docker exec` (via Docker socket).
+5. The result is returned to the user.
 
-## Por que só LaMa?
+## Why only LaMa?
 
-- Leve (roda bem em CPU)
-- Excelente qualidade para remoção de marcas d'água e texto
-- Não precisa de prompt
-- Rápido de construir e executar
+- Lightweight (runs well on CPU)
+- Excellent quality for watermark and text removal
+- No prompt needed
+- Fast to build and run
 
-Outros engines (SD Inpaint, etc.) foram removidos para manter o projeto simples, leve e adequado como portfólio/estudo.
+Other engines (SD Inpaint, etc.) were removed to keep the project simple, lightweight, and suitable as a portfolio/study project.
 
-## Como adicionar um novo Engine (futuro)
+## How to add a new Engine (future)
 
-Se quiser experimentar outros modelos depois:
+If you want to try other models later:
 
-1. Crie `novo_engine.py` herdando de `BaseEngine`
-2. Implemente `process()`
-3. Registre no `engine_factory.py`
+1. Create `new_engine.py` inheriting from `BaseEngine`
+2. Implement `process()`
+3. Register it in `engine_factory.py`
 
-## Comandos úteis
+## Useful commands
 
 ```bash
-# Ver logs do processamento
+# View processing logs
 docker compose logs -f celery-worker
 
-# Acessar o container do IOPaint
+# Access the IOPaint container
 docker exec -it cleanly-iopaint bash
 ```
 
-## Stack usada
+## Stack
 
 - LaMa (via IOPaint)
 - FastAPI + Celery + PostgreSQL + Redis

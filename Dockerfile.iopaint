@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y \
 # Install IOPaint (LaMa only - this is the heaviest layer)
 RUN pip install --no-cache-dir iopaint
 
-# Expõe a porta
+# Expose the port
 EXPOSE 8080
 
-# Comando padrão (pode ser sobrescrito no docker-compose)
+# Default command (can be overridden in docker-compose)
 CMD ["iopaint", "run", "--model", "lama", "--device", "cpu", "--port", "8080"]

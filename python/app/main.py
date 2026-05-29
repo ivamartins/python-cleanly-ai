@@ -23,7 +23,7 @@ Base.metadata.create_all(bind=engine)
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-# Servir arquivos estáticos (resultados e uploads)
+# Serve static files (results and uploads)
 app.mount("/results", StaticFiles(directory=str(RESULTS_DIR)), name="results")
 app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 

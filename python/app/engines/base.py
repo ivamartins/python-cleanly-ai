@@ -5,8 +5,8 @@ from typing import Optional
 
 class BaseEngine(ABC):
     """
-    Interface para todos os engines de processamento de imagem.
-    Cada engine (LaMa, SD Inpainting, Flux, etc.) deve implementar esta classe.
+    Interface for all image processing engines.
+    Each engine (LaMa, SD Inpainting, Flux, etc.) must implement this class.
     """
 
     name: str
@@ -40,16 +40,16 @@ class BaseEngine(ABC):
         negative_prompt: Optional[str] = None,
     ) -> Path:
         """
-        Executa o processamento de remoção de marca d'água.
+        Executes the watermark removal processing.
 
         Args:
-            original_image_path: Caminho da imagem original
-            mask_path: Caminho da máscara (já preparada)
+            original_image_path: Path to the original image
+            mask_path: Path to the prepared mask
             mode: Editing mode (currently only "watermark")
-            prompt: Ignorado no LaMa
-            negative_prompt: Ignorado no LaMa
+            prompt: Ignored by LaMa
+            negative_prompt: Ignored by LaMa
 
         Returns:
-            Path do resultado gerado
+            Path to the generated result
         """
         pass

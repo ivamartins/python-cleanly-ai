@@ -26,7 +26,7 @@ async def create_generation(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # Salva a imagem original
+    # Save the original image
     original_filename = f"{uuid.uuid4().hex}_{image.filename}"
     original_path = UPLOADS_DIR / original_filename
 

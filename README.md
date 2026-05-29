@@ -1,114 +1,116 @@
 # Cleanly
 
-**Remoção Inteligente de Marca d'Água com IA Local**
+**Intelligent Watermark Removal with Local AI**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)](https://www.docker.com/)
 
-Cleanly é uma aplicação web moderna e leve para **remoção de marcas d'água, logos e textos** de imagens usando inteligência artificial local (LaMa via IOPaint).
+Cleanly is a modern, lightweight web application for **removing watermarks, logos, and text** from images using local AI (LaMa via IOPaint).
 
-> Projeto desenvolvido com foco em **qualidade de código**, simplicidade e como portfólio técnico / estudo.
-
----
-
-## ✨ Funcionalidades
-
-- Remoção de alta qualidade usando **LaMa** (excelente para marcas d'água e texto)
-- Editor de máscara com pincel e borracha (preciso e intuitivo)
-- Processamento assíncrono (fila com Celery)
-- Galeria de resultados com thumbnails
-- Autenticação JWT (login e registro)
-- 100% local — nenhuma imagem sai do seu computador
-- Arquitetura limpa e fácil de estudar
+> Built with a focus on **code quality**, simplicity, and as a technical portfolio / study project.
 
 ---
 
-## 🛠️ Stack Tecnológica
+## Features
 
-| Camada       | Tecnologia                          |
-|--------------|-------------------------------------|
-| Backend      | FastAPI + SQLAlchemy + Celery       |
-| IA           | LaMa (via IOPaint)                  |
-| Banco        | PostgreSQL                          |
-| Cache/Fila   | Redis                               |
-| Frontend     | Next.js 15 + TypeScript + Tailwind  |
-| Infra        | Docker Compose                      |
-
----
-
-## 📦 Tamanho do Build e Otimizações
-
-O projeto foi cuidadosamente otimizado para ter o menor tamanho possível de imagem:
-
-- Usamos **Docker socket mount** no worker (em vez de instalar o pacote `docker.io` dentro da imagem Python).
-- Adicionamos `.dockerignore` estratégicos para reduzir o contexto de build.
-- Apenas o container `iopaint` carrega as dependências pesadas do LaMa.
-
-**Estimativa realista:**
-- Primeiro build completo: ≈ **2.8 GB – 3.5 GB** no disco
-- Build subsequentes: muito mais rápidos (usa cache)
+- High-quality removal using **LaMa** (excellent for watermarks and text)
+- Mask editor with brush and eraser (precise and intuitive)
+- Async processing (Celery task queue)
+- Results gallery with thumbnails
+- JWT authentication (login and registration)
+- 100% local — no images leave your computer
+- Clean architecture, easy to study
 
 ---
 
-## 🏗️ Arquitetura de Processamento
+## Tech Stack
 
-O processamento de imagens é feito da seguinte forma:
+| Layer       | Technology                          |
+|-------------|-------------------------------------|
+| Backend     | FastAPI + SQLAlchemy + Celery       |
+| AI          | LaMa (via IOPaint)                  |
+| Database    | PostgreSQL                          |
+| Cache/Queue | Redis                               |
+| Frontend    | Next.js 15 + TypeScript + Tailwind  |
+| Infra       | Docker Compose                      |
 
-1. O Celery Worker recebe a tarefa.
-2. Ele executa o comando `iopaint` **dentro do container dedicado** usando `docker exec` (via Docker socket).
-3. O LaMa processa a imagem com a máscara enviada.
-4. O resultado é salvo no volume compartilhado e retornado ao usuário.
+---
 
-Essa abordagem mantém as imagens do backend e worker bem leves.
+## Build Size & Optimizations
 
-## 🚀 Como Rodar (Recomendado)
+The project is carefully optimized for minimal image size:
 
-### 1. Clone o repositório
+- Uses **Docker socket mount** in the worker (instead of installing `docker.io` inside the Python image).
+- Strategic `.dockerignore` files to reduce build context.
+- Only the `iopaint` container carries the heavy LaMa dependencies.
+
+**Realistic estimate:**
+- First full build: ≈ **2.8 GB – 3.5 GB** on disk
+- Subsequent builds: much faster (uses cache)
+
+---
+
+## Processing Architecture
+
+Image processing works as follows:
+
+1. The Celery Worker receives the task.
+2. It runs the `iopaint` command **inside the dedicated container** using `docker exec` (via Docker socket).
+3. LaMa processes the image with the provided mask.
+4. The result is saved to the shared volume and returned to the user.
+
+This approach keeps both the backend and worker images very lightweight.
+
+---
+
+## How to Run (Recommended)
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/ivamartins/python-cleanly-ai.git
 cd python-cleanly-ai
 ```
 
-### 2. Configure as variáveis de ambiente
+### 2. Configure environment variables
 
 ```bash
 cp .env.example .env
 ```
 
-Edite o arquivo `.env` e coloque uma `SECRET_KEY` forte:
+Edit the `.env` file and set a strong `SECRET_KEY`:
 
 ```bash
-# Gere uma chave segura
+# Generate a secure key
 openssl rand -hex 32
 ```
 
-### 3. Suba a aplicação
+### 3. Start the application
 
 ```bash
 sudo docker compose up --build -d
 ```
 
-**Notas importantes sobre o build:**
+**Important build notes:**
 
-- A primeira execução é mais pesada porque baixa as imagens base + o container do IOPaint (LaMa).
-- Tamanho total estimado após o primeiro build completo: **~2.8 GB – 3.5 GB** no disco.
-- O projeto foi otimizado para ser o mais leve possível (não instalamos `docker.io` dentro da imagem Python, usamos Docker socket mount em vez disso).
+- The first run is heavier because it downloads base images + the IOPaint container (LaMa).
+- Estimated total size after the first full build: **~2.8 GB – 3.5 GB** on disk.
+- The project is optimized to be as light as possible (no `docker.io` inside the Python image, uses Docker socket mount instead).
 
-Execuções seguintes são muito mais rápidas graças ao cache do Docker.
+Subsequent runs are much faster thanks to Docker cache.
 
-### 4. Acesse a aplicação
+### 4. Access the application
 
 - **Frontend**: http://localhost:3000
 - **API Docs**: http://localhost:8000/docs
 
-Crie uma conta e comece a remover marcas d'água!
+Create an account and start removing watermarks!
 
 ---
 
-## 📁 Estrutura do Projeto
+## Project Structure
 
 ```
 python-cleanly-ai/
@@ -122,7 +124,7 @@ python-cleanly-ai/
 │   ├── app/
 │   └── components/
 │
-└── python/                   # Backend FastAPI
+└── python/                   # FastAPI Backend
     ├── app/
     │   ├── engines/          # LaMa Engine
     │   ├── routers/
@@ -133,42 +135,42 @@ python-cleanly-ai/
 
 ---
 
-## 🎯 Objetivo do Projeto
+## Project Goals
 
-Este projeto foi criado com os seguintes propósitos:
+This project was created with the following purposes:
 
-- Servir como **portfólio técnico** (Full Stack + IA)
-- Demonstrar uma arquitetura limpa com **Engines plugáveis**
-- Ser um bom material de **estudo** (código bem organizado e comentado)
-- Focar em uma funcionalidade excelente (Watermark Removal) em vez de muitas funcionalidades medíocres
-
----
-
-## 🔒 Privacidade
-
-Todas as imagens e processamentos acontecem **localmente**.  
-Nada é enviado para servidores externos.
+- Serve as a **technical portfolio** (Full Stack + AI)
+- Demonstrate clean architecture with **pluggable Engines**
+- Provide good **study material** (well-organized and commented code)
+- Focus on doing one thing excellently (Watermark Removal) rather than many things mediocrely
 
 ---
 
-## 📄 Licença
+## Privacy
 
-Distribuído sob a licença [MIT](LICENSE).
+All images and processing happen **locally**.
+Nothing is sent to external servers.
 
 ---
 
-## 👤 Autor
+## License
 
-**Iva Martins**  
+Distributed under the [MIT](LICENSE) license.
+
+---
+
+## Author
+
+**Iva Martins**
 https://github.com/ivamartins
 
 ---
 
-## 🤝 Contribuições
+## Contributions
 
-Este é um projeto de estudo e portfólio.  
-Sugestões e melhorias são bem-vindas via Pull Request ou Issues.
+This is a study and portfolio project.
+Suggestions and improvements are welcome via Pull Request or Issues.
 
 ---
 
-**Feito com foco em qualidade e simplicidade.**
+**Built with focus on quality and simplicity.**
